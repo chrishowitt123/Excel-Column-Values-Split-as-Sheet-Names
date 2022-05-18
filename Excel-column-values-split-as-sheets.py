@@ -1,32 +1,25 @@
 import pandas as pd
 import os
-import datetime as dt
-os.chdir(r'M:\MSG Open Episodes\Apointments pull 24.01.22')
+os.chdir('M:\Track Splits')
+from pandas import ExcelWriter
 
-df = pd.read_csv('apptsFull.txt', '\t')
+filename = 'Booked appointments May 2022'
+df = pd.read_excel(r"P:\Analysis_HI\Data Requests\2022\TrakCare Down Time May 2022\Booked appointments May 2022.xlsx")
 
-df.columns=['URN', 'EpisodeNumber', 'CareProvider', 'Speciality', 'Unknown', 'AppointmentDate', 'AppointmentTime', 'AptCareProvider', 'AptSpeciality', 'Group']
-df['AppointmentDate'] =  pd.to_datetime(df['AppointmentDate'],errors='coerce')
-
-df = df.sort_values(['URN','EpisodeNumber','AppointmentDate', 'AppointmentTime'],ascending=[True,False,False,False])
 cols = list(df.columns)
 
-ep_groups = df.groupby('EpisodeNumber')
+col_of_interest = 'Doctor'
+col_of_interest_values = list(df[col_of_interest].unique())
 
-results_list = []
+# Filter within col_of_interest
+search = ['Dr Ray Armstrong', 'Dr Christopher Holroyd'] 
+df = df[df[col_of_interest].isin(search)]
 
-for k,v in ep_groups:
-    v['PreviousApt'] = v['AppointmentDate'].shift(-1)
-    v['DaysSincePrivousAppiontment'] = v['AppointmentDate'] -  v['PreviousApt']
-    df_out = v
-    results_list.append(df_out)
-    
-df_res =  pd.concat(results_list)
+sheet_names = list(df[col_of_interest].unique())
 
-df_res['DaysSincePrivousAppiontment'] = df_res['DaysSincePrivousAppiontment'].dt.total_seconds()
-
-df_res['DaysSincePrivousAppiontment'] = df_res['DaysSincePrivousAppiontment'] / 60 / 60 / 24
-
-df_res = df_res[df_res['DaysSincePrivousAppiontment'] > 365]
-
-df_res.to_excel('Days between appointments.xlsx', index= False)
+# To Excel object loop through values, filter df, write to sheet and name sheet as per filter value
+w = ExcelWriter(f'{filename}_splits.xlsx')
+for n in sheet_names:
+    res = df[df['Doctor'] == n]
+    res.to_excel(w, sheet_name=n, index=False)
+w .save()   
