@@ -1,6 +1,13 @@
 import pandas as pd
 import os
 from pandas import ExcelWriter
+
+"""
+A program that splits a DataFrame by a column;s values and uses the said values to rename sheets
+in Excel before writing
+
+"""
+# define CWD
 os.chdir('M:\Track Splits')
 
 # path to file to split
