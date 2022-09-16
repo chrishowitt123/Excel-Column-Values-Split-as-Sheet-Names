@@ -3,8 +3,8 @@ import os
 from pandas import ExcelWriter
 
 """
-A program that splits a DataFrame by a column;s values and uses the said values to rename sheets
-in Excel before writing
+A program that splits a DataFrame by a column's values and uses the said values to rename sheets
+in Excel before writing the column splits.
 
 """
 # define CWD
@@ -27,7 +27,7 @@ col_of_interest = 'Doctor'
 
 # if filtering of col_of_interest required, uncomment the following:
 # search = ['Dr A', 'Dr B'] 
-#df = df[df[col_of_interest].isin(search)]
+# df = df[df[col_of_interest].isin(search)]
 
 # define sheet names
 sheet_names = list(df[col_of_interest].unique())
